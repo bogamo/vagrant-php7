@@ -5,7 +5,8 @@ class Build
     config.vm.box = "ncaro/php7-debian8-apache-nginx-mysql"
 
     # Configure A Private Network IP
-    config.vm.network :private_network, ip: settings["ip"] ||= "192.168.7.7"
+    # config.vm.network :private_network, ip: settings["ip"] ||= "192.168.0.191"
+    config.vm.network "public_network", :bridge => "Ethernet", :ip => "192.168.0.191"
 
     if settings['networking'][0]['public']
       config.vm.network "public_network", type: "dhcp"
@@ -45,13 +46,13 @@ class Build
       if settings["nginx"] ||= false
           config.vm.provision "shell", inline: "sudo service php5-fpm stop && sudo service php7-fpm restart"
       else
-          config.vm.provision "shell", inline: "sudo a2dismod php5 && sudo a2enmod php7"
+          config.vm.provision "shell", inline: "sudo a2dismod php5 && sudo a2enmod php7 && sudo a2enmod vhost_alias"
       end
     else
       if settings["nginx"] ||= false
           config.vm.provision "shell", inline: "sudo service php7-fpm stop && sudo service php5-fpm restart"
       else
-          config.vm.provision "shell", inline: "sudo a2dismod php7 && sudo a2enmod php5"
+          config.vm.provision "shell", inline: "sudo a2dismod php7 && sudo a2enmod php5 && sudo a2enmod vhost_alias"
       end
     end
 
